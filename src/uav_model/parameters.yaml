@@ -1,0 +1,73 @@
+# ==============================================================================
+# Quadplane Condor Physical, Aerodynamic, and Hybrid VTOL Parameters
+# 4+1 Layout (4 VTOL Lift Motors + 1 Tractor Forward Motor + V-Tail)
+# ==============================================================================
+
+# -- Mass & Dimensions --
+mass: 7.8                 # [kg] Total Maximum Takeoff Weight (MTOW)
+wingspan: 2.40            # [m] Wingspan (Main rectangular wing)
+wing_area: 0.42           # [m²] Wing planform area
+wing_chord: 0.175         # [m] Mean Aerodynamic Chord (MAC)
+aspect_ratio: 13.71       # Aspect Ratio (b² / S)
+
+# -- Moments of Inertia [kg·m²] --
+inertia:
+  Ixx: 1.46               # Roll inertia (2.4m wingspan)
+  Iyy: 1.06               # Pitch inertia (1.64m fuselage length)
+  Izz: 2.50               # Yaw inertia
+
+# -- VTOL Lift Motors (Rotors 0, 1, 2, 3 - 17-inch Propellers) --
+vtol_motor:
+  k_thrust: 2.5e-5        # Thrust coefficient: F = k_thrust * omega²
+  k_drag: 1.06e-6         # Drag torque coefficient: M = k_drag * omega²
+  max_rpm: 14300          # Maximum motor RPM (1500 rad/s)
+  min_rpm: 100
+  arm_length_x: 0.4416    # [m] Longitudinal distance from CG to front/rear motors
+  arm_length_y: 0.4236    # [m] Lateral distance from centerline to boom motors
+
+# -- Forward Tractor Motor (Rotor 4 - 15-inch Nose Propeller) --
+tractor_motor:
+  k_thrust: 8.55e-6       # Forward thrust coefficient along body +X axis
+  max_thrust: 34.0        # [N] Maximum forward thrust
+  max_rpm: 33400          # Maximum RPM (3500 rad/s)
+
+# -- Wing & Airframe Aerodynamics --
+aerodynamics:
+  air_density: 1.225      # [kg/m³] Standard sea level air density
+  CL0: 0.28               # Zero-AoA lift coefficient (cambered airfoil)
+  CL_alpha: 4.86          # Lift curve slope [1/rad]
+  CD0: 0.024              # Parasitic drag coefficient
+  induced_drag_factor: 0.028 # k factor in CD = CD0 + k * CL²
+  alpha_stall: 0.297      # [rad] ~17 degrees stall angle of attack
+  CL_stall: 1.45          # Maximum lift coefficient at stall
+
+# -- V-Tail Control Surfaces (Ruddervators) --
+vtail:
+  area: 0.12              # [m²] Total V-tail area
+  lever_arm: 0.8655       # [m] Distance from CG to V-tail aerodynamic center
+  dihedral_angle: 0.7854  # [rad] 45 degrees V-tail dihedral
+
+# -- Hybrid VTOL Flight & Transition Limits --
+vtol_transition:
+  v_stall: 12.0           # [m/s] Wing stall airspeed
+  v_trans: 15.0           # [m/s] Forward transition completion airspeed
+  v_cruise: 18.0          # [m/s] Fixed-wing economic cruise airspeed
+  v_max: 25.0             # [m/s] Maximum safe forward airspeed
+  transition_timeout: 15.0 # [s] Maximum time allowed for transition
+  transition_pitch_deg: 3.0 # [deg] Target pitch angle during forward transition
+  hover_altitude: 15.0    # [m] Target altitude for VTOL hover and transition initiation
+
+# -- Physical Constraints --
+limits:
+  max_tilt_angle_mc: 0.5236 # [rad] ~30 degrees in Multicopter mode
+  max_roll_angle_fw: 0.7854 # [rad] ~45 degrees in Fixed-Wing bank turns
+  max_climb_rate: 6.0       # [m/s]
+  max_sink_rate: 3.0        # [m/s]
+
+# -- Environment --
+gravity: 9.81             # [m/s²]
+
+# -- Simulation --
+simulation:
+  dt: 0.005               # [s] Integration timestep (200 Hz)
+  duration: 60.0          # [s] Default simulation duration

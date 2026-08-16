@@ -1,0 +1,25 @@
+# ==============================================================================
+# Flight Scenarios Configuration for Quadplane Condor (7.8kg MTOW)
+# ==============================================================================
+
+hover:
+  target_altitude: -10.0 # (m) NED down is negative
+  hover_time: 12.0       # (s)
+
+square:
+  altitude: -12.0        # (m)
+  side_length: 20.0      # (m)
+  speed: 3.5             # (m/s)
+
+circle:
+  altitude: -15.0        # (m)
+  radius: 15.0           # (m)
+  angular_speed: 0.25    # (rad/s)
+  duration: 35.0         # (s)
+
+figure8:
+  altitude: -15.0        # (m) NED: negative = up
+  x_amplitude: 25.0      # (m) amplitude along X axis
+  y_amplitude: 45.0      # (m) amplitude along Y axis
+  angular_speed: 0.157   # (rad/s) ~ pi/20
+  duration: 60.0         # (s)

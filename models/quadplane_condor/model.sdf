@@ -1,0 +1,804 @@
+<?xml version="1.0"?>
+<!-- Quadplane Condor: 4+1 tractor, V-tail, 7.8kg MTOW, 2.4m wingspan -->
+<!-- Sub-millimeter 3D circle fitting on CAD motor mounts and spinner shaft -->
+<sdf version='1.10'>
+  <model name='quadplane_condor'>
+    <!-- Spawn height above ground -->
+    <pose>0 0 0.35 0 0 0</pose>
+
+    <!-- ============================================================ -->
+    <!-- BASE LINK (Fuselage, Wing, Booms & Motor Mounts from CAD)    -->
+    <!-- ============================================================ -->
+    <link name='base_link'>
+      <pose>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>7.8</mass>
+        <inertia>
+          <ixx>1.46</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1.06</iyy>
+          <iyz>0</iyz>
+          <izz>2.50</izz>
+        </inertia>
+      </inertial>
+
+      <!-- Collision body matching Condor dimensions -->
+      <collision name='base_link_collision'>
+        <pose>0 0 -0.05 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>1.64 2.40 0.12</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode>
+              <kp>100000</kp>
+              <kd>1.0</kd>
+              <max_vel>0.1</max_vel>
+              <min_depth>0.001</min_depth>
+            </ode>
+          </contact>
+          <friction>
+            <ode />
+          </friction>
+        </surface>
+      </collision>
+
+      <!-- Visual: Condor 3D CAD Mesh (Scale 1.0, exact CAD center alignment) -->
+      <visual name='base_link_visual'>
+        <pose>0.4221 0.0 -0.0050 1.5707963268 0 1.5707963268</pose>
+        <geometry>
+          <mesh>
+            <scale>1.0 1.0 1.0</scale>
+            <uri>model://quadplane_condor/meshes/quadplane_condor.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.8 0.8 0.85 1.0</ambient>
+          <diffuse>0.8 0.8 0.85 1.0</diffuse>
+          <specular>0.4 0.4 0.4 1.0</specular>
+        </material>
+      </visual>
+
+      <gravity>1</gravity>
+      <velocity_decay />
+      <self_collide>0</self_collide>
+
+      <!-- ============================================================ -->
+      <!-- SENSORS                                                      -->
+      <!-- ============================================================ -->
+      <sensor name="imu_sensor" type="imu">
+        <gz_frame_id>base_link</gz_frame_id>
+        <always_on>1</always_on>
+        <update_rate>250</update_rate>
+        <imu>
+          <angular_velocity>
+            <x>
+              <noise type="gaussian">
+                <mean>0</mean>
+                <stddev>0.0003394</stddev>
+                <dynamic_bias_stddev>3.8785e-05</dynamic_bias_stddev>
+                <dynamic_bias_correlation_time>1000</dynamic_bias_correlation_time>
+              </noise>
+            </x>
+            <y>
+              <noise type="gaussian">
+                <mean>0</mean>
+                <stddev>0.0003394</stddev>
+                <dynamic_bias_stddev>3.8785e-05</dynamic_bias_stddev>
+                <dynamic_bias_correlation_time>1000</dynamic_bias_correlation_time>
+              </noise>
+            </y>
+            <z>
+              <noise type="gaussian">
+                <mean>0</mean>
+                <stddev>0.0003394</stddev>
+                <dynamic_bias_stddev>3.8785e-05</dynamic_bias_stddev>
+                <dynamic_bias_correlation_time>1000</dynamic_bias_correlation_time>
+              </noise>
+            </z>
+          </angular_velocity>
+          <linear_acceleration>
+            <x>
+              <noise type="gaussian">
+                <mean>0</mean>
+                <stddev>0.004</stddev>
+                <dynamic_bias_stddev>0.006</dynamic_bias_stddev>
+                <dynamic_bias_correlation_time>300</dynamic_bias_correlation_time>
+              </noise>
+            </x>
+            <y>
+              <noise type="gaussian">
+                <mean>0</mean>
+                <stddev>0.004</stddev>
+                <dynamic_bias_stddev>0.006</dynamic_bias_stddev>
+                <dynamic_bias_correlation_time>300</dynamic_bias_correlation_time>
+              </noise>
+            </y>
+            <z>
+              <noise type="gaussian">
+                <mean>0</mean>
+                <stddev>0.004</stddev>
+                <dynamic_bias_stddev>0.006</dynamic_bias_stddev>
+                <dynamic_bias_correlation_time>300</dynamic_bias_correlation_time>
+              </noise>
+            </z>
+          </linear_acceleration>
+        </imu>
+      </sensor>
+
+      <sensor name="air_pressure_sensor" type="air_pressure">
+        <gz_frame_id>base_link</gz_frame_id>
+        <always_on>1</always_on>
+        <update_rate>50</update_rate>
+        <air_pressure>
+          <pressure>
+            <noise type="gaussian">
+              <mean>0</mean>
+              <stddev>0.01</stddev>
+            </noise>
+          </pressure>
+        </air_pressure>
+      </sensor>
+
+      <sensor name="magnetometer_sensor" type="magnetometer">
+        <gz_frame_id>base_link</gz_frame_id>
+        <always_on>1</always_on>
+        <update_rate>100</update_rate>
+        <magnetometer>
+          <x>
+            <noise type="gaussian">
+              <stddev>0.0001</stddev>
+            </noise>
+          </x>
+          <y>
+            <noise type="gaussian">
+              <stddev>0.0001</stddev>
+            </noise>
+          </y>
+          <z>
+            <noise type="gaussian">
+              <stddev>0.0001</stddev>
+            </noise>
+          </z>
+        </magnetometer>
+      </sensor>
+
+      <sensor name="navsat_sensor" type="navsat">
+        <gz_frame_id>base_link</gz_frame_id>
+        <always_on>1</always_on>
+        <update_rate>30</update_rate>
+      </sensor>
+    </link>
+
+    <!-- ============================================================ -->
+    <!-- AIRSPEED PITOT SENSOR LINK (Native GZ differential pressure) -->
+    <!-- ============================================================ -->
+    <link name="airspeed_link">
+      <pose relative_to="base_link">0.52 0 0.05 0 0 0</pose>
+      <inertial>
+        <mass>0.005</mass>
+        <inertia>
+          <ixx>1e-06</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1e-06</iyy>
+          <iyz>0</iyz>
+          <izz>1e-06</izz>
+        </inertia>
+      </inertial>
+      <sensor name="air_speed" type="air_speed">
+        <gz_frame_id>airspeed_link</gz_frame_id>
+        <pose>0 0 0 0 0 0</pose>
+        <update_rate>50.0</update_rate>
+        <always_on>1</always_on>
+        <visualize>false</visualize>
+        <air_speed>
+          <noise type="gaussian">
+            <mean>0</mean>
+            <stddev>0.005</stddev>
+          </noise>
+        </air_speed>
+      </sensor>
+    </link>
+
+    <joint name="airspeed_joint" type="fixed">
+      <parent>base_link</parent>
+      <child>airspeed_link</child>
+    </joint>
+
+    <!-- ============================================================ -->
+    <!-- QUAD ROTOR 0: Front-Right Motor (17-inch CCW Propeller)      -->
+    <!-- CAD Mount Center: X = +0.4416m, Y = -0.4236m, Z = +0.0959m   -->
+    <!-- Prop diameter: 43.2cm (17 in), Radius: 0.216m                -->
+    <!-- ============================================================ -->
+    <link name='rotor_0'>
+      <pose>0.4416 -0.4236 0.0959 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.005</mass>
+        <inertia>
+          <ixx>9.75e-07</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000166704</iyy>
+          <iyz>0</iyz>
+          <izz>0.000167604</izz>
+        </inertia>
+      </inertial>
+      <collision name='rotor_0_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <cylinder><length>0.008</length><radius>0.216</radius></cylinder>
+        </geometry>
+        <surface>
+          <contact><ode /></contact>
+          <friction><ode /></friction>
+        </surface>
+      </collision>
+      <visual name='rotor_0_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1.8 1.8 1.8</scale>
+            <uri>model://quadplane_condor/meshes/iris_prop_ccw.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.15 0.15 0.85 1.0</ambient>
+          <diffuse>0.15 0.15 0.85 1.0</diffuse>
+        </material>
+      </visual>
+      <gravity>1</gravity>
+      <velocity_decay />
+      <self_collide>0</self_collide>
+    </link>
+    <joint name='rotor_0_joint' type='revolute'>
+      <child>rotor_0</child>
+      <parent>base_link</parent>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <!-- ============================================================ -->
+    <!-- QUAD ROTOR 1: Rear-Left Motor (17-inch CCW Propeller)        -->
+    <!-- CAD Mount Center: X = -0.4428m, Y = +0.4192m, Z = +0.1183m   -->
+    <!-- Prop diameter: 43.2cm (17 in), Radius: 0.216m                -->
+    <!-- ============================================================ -->
+    <link name='rotor_1'>
+      <pose>-0.4428 0.4192 0.1183 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.005</mass>
+        <inertia>
+          <ixx>9.75e-07</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000166704</iyy>
+          <iyz>0</iyz>
+          <izz>0.000167604</izz>
+        </inertia>
+      </inertial>
+      <collision name='rotor_1_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <cylinder><length>0.008</length><radius>0.216</radius></cylinder>
+        </geometry>
+        <surface>
+          <contact><ode /></contact>
+          <friction><ode /></friction>
+        </surface>
+      </collision>
+      <visual name='rotor_1_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1.8 1.8 1.8</scale>
+            <uri>model://quadplane_condor/meshes/iris_prop_ccw.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.15 0.15 0.85 1.0</ambient>
+          <diffuse>0.15 0.15 0.85 1.0</diffuse>
+        </material>
+      </visual>
+      <gravity>1</gravity>
+      <velocity_decay />
+      <self_collide>0</self_collide>
+    </link>
+    <joint name='rotor_1_joint' type='revolute'>
+      <child>rotor_1</child>
+      <parent>base_link</parent>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <!-- ============================================================ -->
+    <!-- QUAD ROTOR 2: Front-Left Motor (17-inch CW Propeller)        -->
+    <!-- CAD Mount Center: X = +0.4416m, Y = +0.4236m, Z = +0.0959m   -->
+    <!-- Prop diameter: 43.2cm (17 in), Radius: 0.216m                -->
+    <!-- ============================================================ -->
+    <link name='rotor_2'>
+      <pose>0.4416 0.4236 0.0959 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.005</mass>
+        <inertia>
+          <ixx>9.75e-07</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000166704</iyy>
+          <iyz>0</iyz>
+          <izz>0.000167604</izz>
+        </inertia>
+      </inertial>
+      <collision name='rotor_2_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <cylinder><length>0.008</length><radius>0.216</radius></cylinder>
+        </geometry>
+        <surface>
+          <contact><ode /></contact>
+          <friction><ode /></friction>
+        </surface>
+      </collision>
+      <visual name='rotor_2_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1.8 1.8 1.8</scale>
+            <uri>model://quadplane_condor/meshes/iris_prop_cw.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.15 0.15 0.85 1.0</ambient>
+          <diffuse>0.15 0.15 0.85 1.0</diffuse>
+        </material>
+      </visual>
+      <gravity>1</gravity>
+      <velocity_decay />
+      <self_collide>0</self_collide>
+    </link>
+    <joint name='rotor_2_joint' type='revolute'>
+      <child>rotor_2</child>
+      <parent>base_link</parent>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <!-- ============================================================ -->
+    <!-- QUAD ROTOR 3: Rear-Right Motor (17-inch CW Propeller)        -->
+    <!-- CAD Mount Center: X = -0.4428m, Y = -0.4192m, Z = +0.1183m   -->
+    <!-- Prop diameter: 43.2cm (17 in), Radius: 0.216m                -->
+    <!-- ============================================================ -->
+    <link name='rotor_3'>
+      <pose>-0.4428 -0.4192 0.1183 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.005</mass>
+        <inertia>
+          <ixx>9.75e-07</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000166704</iyy>
+          <iyz>0</iyz>
+          <izz>0.000167604</izz>
+        </inertia>
+      </inertial>
+      <collision name='rotor_3_collision'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <cylinder><length>0.008</length><radius>0.216</radius></cylinder>
+        </geometry>
+        <surface>
+          <contact><ode /></contact>
+          <friction><ode /></friction>
+        </surface>
+      </collision>
+      <visual name='rotor_3_visual'>
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1.8 1.8 1.8</scale>
+            <uri>model://quadplane_condor/meshes/iris_prop_cw.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.15 0.15 0.85 1.0</ambient>
+          <diffuse>0.15 0.15 0.85 1.0</diffuse>
+        </material>
+      </visual>
+      <gravity>1</gravity>
+      <velocity_decay />
+      <self_collide>0</self_collide>
+    </link>
+    <joint name='rotor_3_joint' type='revolute'>
+      <child>rotor_3</child>
+      <parent>base_link</parent>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <!-- ============================================================ -->
+    <!-- TRACTOR/PULLER MOTOR: 15-inch Forward Propeller on Nose Hub  -->
+    <!-- CAD Nose shaft location: X = +0.5256m, Y = 0.0m, Z = 0.0m     -->
+    <!-- Prop diameter: 38.1cm (15 in), Radius: 0.190m                -->
+    <!-- Turning direction: CW, spins on X axis, pulls forward along +X-->
+    <!-- ============================================================ -->
+    <link name='rotor_puller'>
+      <pose>0.5256 0.0 0.0 0 1.5707963268 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.005</mass>
+        <inertia>
+          <ixx>9.75e-07</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000166704</iyy>
+          <iyz>0</iyz>
+          <izz>0.000167604</izz>
+        </inertia>
+      </inertial>
+      <collision name='rotor_puller_collision'>
+        <pose>0.0 0 -0.01 0 0 0</pose>
+        <geometry>
+          <cylinder><length>0.008</length><radius>0.190</radius></cylinder>
+        </geometry>
+        <surface>
+          <contact><ode /></contact>
+          <friction><ode /></friction>
+        </surface>
+      </collision>
+      <visual name='rotor_puller_visual'>
+        <pose>0 0 -0.01 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1.5 1.5 1.5</scale>
+            <uri>model://quadplane_condor/meshes/iris_prop_ccw.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.9 0.15 0.15 1.0</ambient>
+          <diffuse>0.9 0.15 0.15 1.0</diffuse>
+        </material>
+      </visual>
+      <gravity>1</gravity>
+      <velocity_decay />
+      <self_collide>0</self_collide>
+    </link>
+    <joint name='rotor_puller_joint' type='revolute'>
+      <pose>0.0 0 0.0 0 -1.5707963268 0</pose>
+      <child>rotor_puller</child>
+      <parent>base_link</parent>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-1e+16</lower>
+          <upper>1e+16</upper>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <!-- ============================================================ -->
+    <!-- V-TAIL CONTROL SURFACES (RUDDERVATORS)                       -->
+    <!-- CAD Hinge lines: X = -0.8655m, Y = ±0.1595m, Z = +0.1539m    -->
+    <!-- ============================================================ -->
+    <link name="left_vtail">
+      <inertial>
+        <mass>0.00000001</mass>
+        <inertia>
+          <ixx>0.000001</ixx>
+          <ixy>0.0</ixy>
+          <iyy>0.000001</iyy>
+          <ixz>0.0</ixz>
+          <iyz>0.0</iyz>
+          <izz>0.000001</izz>
+        </inertia>
+        <pose>-0.8655 0.1598 0.1542 0.00 0 0.0</pose>
+      </inertial>
+    </link>
+
+    <link name="right_vtail">
+      <inertial>
+        <mass>0.00000001</mass>
+        <inertia>
+          <ixx>0.000001</ixx>
+          <ixy>0.0</ixy>
+          <iyy>0.000001</iyy>
+          <ixz>0.0</ixz>
+          <iyz>0.0</iyz>
+          <izz>0.000001</izz>
+        </inertia>
+        <pose>-0.8655 -0.1591 0.1536 0.00 0 0.0</pose>
+      </inertial>
+    </link>
+
+    <!-- V-tail servo joints -->
+    <joint name='servo_0' type='revolute'>
+      <parent>base_link</parent>
+      <child>left_vtail</child>
+      <pose>-0.8655 0.1598 0.1542 0 0 0</pose>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-0.78</lower>
+          <upper>0.78</upper>
+        </limit>
+        <dynamics>
+          <damping>1.000</damping>
+        </dynamics>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+        </ode>
+      </physics>
+    </joint>
+
+    <joint name='servo_1' type='revolute'>
+      <parent>base_link</parent>
+      <child>right_vtail</child>
+      <pose>-0.8655 -0.1591 0.1536 0 0 0</pose>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-0.78</lower>
+          <upper>0.78</upper>
+        </limit>
+        <dynamics>
+          <damping>1.000</damping>
+        </dynamics>
+      </axis>
+      <physics>
+        <ode>
+          <implicit_spring_damper>1</implicit_spring_damper>
+        </ode>
+      </physics>
+    </joint>
+
+    <!-- ============================================================ -->
+    <!-- AERODYNAMICS: LIFT/DRAG PLUGINS                              -->
+    <!-- ============================================================ -->
+
+    <!-- Left wing panel lift/drag -->
+    <plugin filename="gz-sim-lift-drag-system" name="gz::sim::systems::LiftDrag">
+      <a0>0.06</a0>
+      <cla>4.86</cla>
+      <cda>0.64</cda>
+      <cma>0.0</cma>
+      <alpha_stall>0.30</alpha_stall>
+      <cla_stall>-3.85</cla_stall>
+      <cda_stall>-0.92</cda_stall>
+      <cma_stall>0</cma_stall>
+      <cp>0.0 0.60 0.05</cp>
+      <area>0.42</area>
+      <air_density>1.2041</air_density>
+      <forward>1 0 0</forward>
+      <upward>0 0 1</upward>
+      <link_name>base_link</link_name>
+      <control_joint_name>servo_0</control_joint_name>
+      <control_joint_rad_to_cl>-0.5</control_joint_rad_to_cl>
+    </plugin>
+
+    <!-- Joint position controller for left V-tail servo -->
+    <plugin
+      filename="gz-sim-joint-position-controller-system"
+      name="gz::sim::systems::JointPositionController">
+      <joint_name>servo_0</joint_name>
+      <sub_topic>servo_0</sub_topic>
+    </plugin>
+
+    <!-- Right wing panel lift/drag -->
+    <plugin filename="gz-sim-lift-drag-system" name="gz::sim::systems::LiftDrag">
+      <a0>0.06</a0>
+      <cla>4.86</cla>
+      <cda>0.64</cda>
+      <cma>0.0</cma>
+      <alpha_stall>0.30</alpha_stall>
+      <cla_stall>-3.85</cla_stall>
+      <cda_stall>-0.92</cda_stall>
+      <cma_stall>0</cma_stall>
+      <cp>0.0 -0.60 0.05</cp>
+      <area>0.42</area>
+      <air_density>1.2041</air_density>
+      <forward>1 0 0</forward>
+      <upward>0 0 1</upward>
+      <link_name>base_link</link_name>
+      <control_joint_name>servo_1</control_joint_name>
+      <control_joint_rad_to_cl>-0.5</control_joint_rad_to_cl>
+    </plugin>
+
+    <!-- Joint position controller for right V-tail servo -->
+    <plugin
+      filename="gz-sim-joint-position-controller-system"
+      name="gz::sim::systems::JointPositionController">
+      <joint_name>servo_1</joint_name>
+      <sub_topic>servo_1</sub_topic>
+    </plugin>
+
+    <!-- Left V-tail surface lift/drag -->
+    <plugin filename="gz-sim-lift-drag-system" name="gz::sim::systems::LiftDrag">
+      <a0>-0.15</a0>
+      <cla>4.75</cla>
+      <cda>0.64</cda>
+      <cma>0.0</cma>
+      <alpha_stall>0.34</alpha_stall>
+      <cla_stall>-3.85</cla_stall>
+      <cda_stall>-0.92</cda_stall>
+      <cma_stall>0</cma_stall>
+      <cp>-0.8655 0.1598 0.1542</cp>
+      <area>0.06</area>
+      <air_density>1.2041</air_density>
+      <forward>1 0 0</forward>
+      <upward>0 0 1</upward>
+      <link_name>base_link</link_name>
+      <control_joint_name>servo_0</control_joint_name>
+      <control_joint_rad_to_cl>-10.0</control_joint_rad_to_cl>
+    </plugin>
+
+    <!-- Right V-tail surface lift/drag -->
+    <plugin filename="gz-sim-lift-drag-system" name="gz::sim::systems::LiftDrag">
+      <a0>-0.15</a0>
+      <cla>4.75</cla>
+      <cda>0.64</cda>
+      <cma>0.0</cma>
+      <alpha_stall>0.34</alpha_stall>
+      <cla_stall>-3.85</cla_stall>
+      <cda_stall>-0.92</cda_stall>
+      <cma_stall>0</cma_stall>
+      <cp>-0.8655 -0.1591 0.1536</cp>
+      <area>0.06</area>
+      <air_density>1.2041</air_density>
+      <forward>1 0 0</forward>
+      <upward>0 0 1</upward>
+      <link_name>base_link</link_name>
+      <control_joint_name>servo_1</control_joint_name>
+      <control_joint_rad_to_cl>-10.0</control_joint_rad_to_cl>
+    </plugin>
+
+    <!-- ============================================================ -->
+    <!-- MOTOR PLUGINS                                                -->
+    <!-- ============================================================ -->
+
+    <!-- Quad Motor 0: Front-Right, CCW (17-inch propeller) -->
+    <plugin filename="gz-sim-multicopter-motor-model-system"
+      name="gz::sim::systems::MulticopterMotorModel">
+      <jointName>rotor_0_joint</jointName>
+      <linkName>rotor_0</linkName>
+      <turningDirection>ccw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>1500</maxRotVelocity>
+      <motorConstant>2.5e-05</motorConstant>
+      <momentConstant>0.06</momentConstant>
+      <commandSubTopic>command/motor_speed</commandSubTopic>
+      <motorNumber>0</motorNumber>
+      <rotorDragCoefficient>0.000106428</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <rotorVelocitySlowdownSim>20</rotorVelocitySlowdownSim>
+      <motorType>velocity</motorType>
+    </plugin>
+
+    <!-- Quad Motor 1: Rear-Left, CCW (17-inch propeller) -->
+    <plugin filename="gz-sim-multicopter-motor-model-system"
+      name="gz::sim::systems::MulticopterMotorModel">
+      <jointName>rotor_1_joint</jointName>
+      <linkName>rotor_1</linkName>
+      <turningDirection>ccw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>1500</maxRotVelocity>
+      <motorConstant>2.5e-05</motorConstant>
+      <momentConstant>0.06</momentConstant>
+      <commandSubTopic>command/motor_speed</commandSubTopic>
+      <motorNumber>1</motorNumber>
+      <rotorDragCoefficient>0.000106428</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <rotorVelocitySlowdownSim>20</rotorVelocitySlowdownSim>
+      <motorType>velocity</motorType>
+    </plugin>
+
+    <!-- Quad Motor 2: Front-Left, CW (17-inch propeller) -->
+    <plugin filename="gz-sim-multicopter-motor-model-system"
+      name="gz::sim::systems::MulticopterMotorModel">
+      <jointName>rotor_2_joint</jointName>
+      <linkName>rotor_2</linkName>
+      <turningDirection>cw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>1500</maxRotVelocity>
+      <motorConstant>2.5e-05</motorConstant>
+      <momentConstant>0.06</momentConstant>
+      <commandSubTopic>command/motor_speed</commandSubTopic>
+      <motorNumber>2</motorNumber>
+      <rotorDragCoefficient>0.000106428</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <rotorVelocitySlowdownSim>20</rotorVelocitySlowdownSim>
+      <motorType>velocity</motorType>
+    </plugin>
+
+    <!-- Quad Motor 3: Rear-Right, CW (17-inch propeller) -->
+    <plugin filename="gz-sim-multicopter-motor-model-system"
+      name="gz::sim::systems::MulticopterMotorModel">
+      <jointName>rotor_3_joint</jointName>
+      <linkName>rotor_3</linkName>
+      <turningDirection>cw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>1500</maxRotVelocity>
+      <motorConstant>2.5e-05</motorConstant>
+      <momentConstant>0.06</momentConstant>
+      <commandSubTopic>command/motor_speed</commandSubTopic>
+      <motorNumber>3</motorNumber>
+      <rotorDragCoefficient>0.000106428</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <rotorVelocitySlowdownSim>20</rotorVelocitySlowdownSim>
+      <motorType>velocity</motorType>
+    </plugin>
+
+    <!-- Tractor/Puller Motor: 15-inch Forward Propeller on Nose Hub -->
+    <plugin
+      filename="gz-sim-multicopter-motor-model-system"
+      name="gz::sim::systems::MulticopterMotorModel">
+      <jointName>rotor_puller_joint</jointName>
+      <linkName>rotor_puller</linkName>
+      <turningDirection>cw</turningDirection>
+      <timeConstantUp>0.0125</timeConstantUp>
+      <timeConstantDown>0.025</timeConstantDown>
+      <maxRotVelocity>3500</maxRotVelocity>
+      <motorConstant>8.54858e-06</motorConstant>
+      <momentConstant>0.01</momentConstant>
+      <commandSubTopic>command/motor_speed</commandSubTopic>
+      <motorNumber>4</motorNumber>
+      <rotorDragCoefficient>0.000106428</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <rotorVelocitySlowdownSim>20</rotorVelocitySlowdownSim>
+      <motorType>velocity</motorType>
+    </plugin>
+
+    <static>0</static>
+  </model>
+</sdf>

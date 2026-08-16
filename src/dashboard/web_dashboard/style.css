@@ -1,0 +1,530 @@
+:root {
+    --bg-dark: #070a12;
+    --bg-panel: #0f172a;
+    --bg-panel-sub: #1e293b;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --accent-blue: #38bdf8;
+    --accent-cyan: #06b6d4;
+    --accent-glow: rgba(56, 189, 248, 0.35);
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --border: #1e293b;
+    --border-light: #334155;
+    --card-radius: 12px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    line-height: 1.4;
+    overflow: hidden;
+    height: 100vh;
+}
+
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 12px;
+    gap: 12px;
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-light);
+    border-radius: var(--card-radius);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.logo-section h1 {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: var(--accent-blue);
+    text-shadow: 0 0 10px var(--accent-glow);
+}
+
+.sub-title {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.radar-pulse {
+    width: 14px;
+    height: 14px;
+    background-color: var(--success);
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    animation: radar-pulse-anim 2s infinite;
+}
+
+@keyframes radar-pulse-anim {
+    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.8); }
+    70% { box-shadow: 0 0 0 14px rgba(16, 185, 129, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+/* Lifecycle Bar */
+.lifecycle-bar {
+    display: flex;
+    gap: 6px;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 4px;
+    border-radius: 30px;
+    border: 1px solid var(--border);
+}
+
+.lifecycle-step {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 20px;
+    color: var(--text-muted);
+    transition: all 0.3s ease;
+}
+
+.lifecycle-step.active {
+    background: linear-gradient(135deg, #0284c7, #06b6d4);
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(6, 182, 212, 0.5);
+}
+
+.lifecycle-step.completed {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--success);
+    border: 1px solid var(--success);
+}
+
+/* Status Bar */
+.status-bar {
+    display: flex;
+    gap: 10px;
+}
+
+.status-badge {
+    background: rgba(0, 0, 0, 0.4);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-badge .dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--success);
+    border-radius: 50%;
+}
+
+.mode-badge strong {
+    color: var(--accent-cyan);
+}
+
+.battery-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    color: var(--warning);
+}
+
+/* Main Grid Layout */
+.main-grid {
+    display: grid;
+    grid-template-columns: 360px 1fr 380px;
+    gap: 12px;
+    flex: 1;
+    min-height: 0;
+}
+
+.panel {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-light);
+    border-radius: var(--card-radius);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+}
+
+.panel-header h2, .instrument-box h2, .plot-box h2 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+}
+
+/* Left Panel: Scenario List */
+.scenario-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    max-height: 320px;
+    padding-right: 4px;
+}
+
+.scenario-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg-panel-sub);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px;
+    color: var(--text-main);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+}
+
+.scenario-card:hover {
+    background: #334155;
+    border-color: var(--accent-blue);
+    transform: translateY(-2px);
+}
+
+.scenario-card.active {
+    background: rgba(56, 189, 248, 0.15);
+    border: 1.5px solid var(--accent-blue);
+    box-shadow: 0 0 14px rgba(56, 189, 248, 0.25);
+}
+
+.scenario-card.highlight {
+    border: 1.5px solid var(--success);
+}
+
+.sc-icon {
+    font-size: 1.6rem;
+}
+
+.sc-info h3 {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.sc-info p {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.action-btn-group {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.btn {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #0284c7, #06b6d4);
+    color: #fff;
+}
+
+.btn-glow:hover {
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.6);
+    transform: scale(1.02);
+}
+
+.dual-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+
+.btn-warning {
+    background: rgba(245, 158, 11, 0.2);
+    color: var(--warning);
+    border: 1px solid var(--warning);
+}
+
+.btn-secondary {
+    background: var(--bg-panel-sub);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+}
+
+/* Propulsion 5 Motors Box */
+.propulsion-box {
+    margin-top: auto;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+}
+
+.propulsion-box h3 {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.quad-layer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.motor-pod {
+    background: var(--bg-panel-sub);
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+}
+
+.m-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    display: block;
+}
+
+.m-bar {
+    height: 6px;
+    background: #000;
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 3px 0;
+}
+
+.m-fill {
+    height: 100%;
+    width: 60%;
+    background: var(--success);
+    transition: width 0.2s ease;
+}
+
+.tractor-fill {
+    background: var(--accent-blue);
+}
+
+.m-rpm {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.nose-pod {
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    padding: 6px;
+    border-radius: 6px;
+}
+
+/* Center Panel: Map */
+.center-panel {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+}
+
+.map-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: rgba(15, 23, 42, 0.95);
+    border-bottom: 1px solid var(--border);
+}
+
+.map-title h2 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.map-coord {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.map-controls {
+    display: flex;
+    gap: 6px;
+}
+
+.layer-btn {
+    background: var(--bg-panel-sub);
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.layer-btn.active {
+    background: var(--accent-blue);
+    color: #000;
+}
+
+.interactive-map {
+    flex: 1;
+    min-height: 0;
+    background: #000;
+}
+
+.map-legend {
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 12px;
+    background: rgba(15, 23, 42, 0.95);
+    border-top: 1px solid var(--border);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.legend-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 4px;
+}
+
+.legend-dot.green { background: var(--success); }
+.legend-dot.orange { background: var(--warning); }
+.legend-dot.cyan { background: var(--accent-cyan); }
+.legend-dot.magenta { background: #d946ef; }
+
+/* Right Panel: PFD & Instruments */
+.right-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.instruments-grid {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 10px;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+}
+
+.pfd-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.compass-label {
+    font-size: 0.72rem;
+    margin-top: 4px;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.telemetry-readouts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+
+.readout-card {
+    background: var(--bg-panel-sub);
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+}
+
+.r-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    display: block;
+}
+
+.r-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.r-unit {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+}
+
+.highlight-val {
+    color: var(--success);
+}
+
+.custom-drone-icon {
+    background: transparent !important;
+    border: none !important;
+    overflow: visible !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000 !important;
+}
+
+.custom-drone-icon svg {
+    display: block;
+    width: 60px;
+    height: 60px;
+    transform-origin: center center;
+    filter: drop-shadow(0 0 10px #06b6d4) drop-shadow(0 0 4px #ffffff);
+}
+
+.drone-tooltip {
+    background: rgba(15, 23, 42, 0.9) !important;
+    border: 1px solid var(--accent-blue) !important;
+    color: #38bdf8 !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    padding: 3px 8px !important;
+    border-radius: 6px !important;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.4) !important;
+}
+
+/* 3D Plot */
+.plotly-container {
+    flex: 1;
+    min-height: 250px;
+    border-radius: 8px;
+    overflow: hidden;
+}

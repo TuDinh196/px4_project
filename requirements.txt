@@ -1,0 +1,9 @@
+mavsdk
+websockets
+numpy
+scipy
+pandas
+matplotlib
+pyyaml
+pytest
+flake8

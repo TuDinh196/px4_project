@@ -1,0 +1,162 @@
+#!/bin/sh
+#
+# @name Quadplane Condor
+#
+# @type Standard VTOL
+#
+# Condor open-source quadplane: 4+1 tractor layout, V-tail,
+# high-aspect-ratio rectangular wing, 2.4m wingspan, 7.8kg MTOW.
+#
+
+. ${R}etc/init.d/rc.vtol_defaults
+
+PX4_SIMULATOR=${PX4_SIMULATOR:=gz}
+PX4_GZ_WORLD=${PX4_GZ_WORLD:=default}
+PX4_SIM_MODEL=${PX4_SIM_MODEL:=quadplane_condor}
+
+param set SIM_GZ_EN 1
+
+# Disable synthetic fallback since native airspeed sensor is connected
+param set SENS_EN_ARSPDSIM 0
+
+# Disable motor failure detection in SITL
+param set FD_ACT_EN 0
+
+# Airframe type: Standard VTOL (quad + fixed wing)
+param set CA_AIRFRAME 2
+
+# Force Simulation Circuit Breakers & Prearm Overrides (No Arming Denials Ever)
+param set COM_PREARM_MODE 0
+param set CBRK_SUPPLY_CHK 894281
+param set CBRK_IO_SAFETY 22027
+param set COM_ARM_WO_GPS 1
+param set COM_ARM_CHK_ESCS 0
+param set COM_ARM_MAG_ANG -1
+param set EKF2_MAG_CHECK 0
+param set COM_RC_IN_MODE 1
+param set NAV_RCL_ACT 0
+param set NAV_DLL_ACT 0
+param set COM_RCL_EXCEPT 4
+
+# -----------------------------------------------------------------------
+# ROTOR CONFIGURATION: 5 rotors (4 quad + 1 puller/tractor)
+# Sub-Millimeter 3D Circle Fitting on CAD Motor Mounts:
+#   Rotor 0 (Front-Right): PX = +0.4416, PY = +0.4236, CCW (KM > 0)
+#   Rotor 1 (Rear-Left):   PX = -0.4428, PY = -0.4192, CCW (KM > 0)
+#   Rotor 2 (Front-Left):  PX = +0.4416, PY = -0.4236, CW  (KM < 0)
+#   Rotor 3 (Rear-Right):  PX = -0.4428, PY = +0.4192, CW  (KM < 0)
+#   Rotor 4 (Nose Puller): PX = +0.5256, AX = 1.0, AZ = 0.0
+# -----------------------------------------------------------------------
+param set CA_ROTOR_COUNT 5
+
+# Motor 0: Front-Right
+param set CA_ROTOR0_PX 0.4416
+param set CA_ROTOR0_PY 0.4236
+param set CA_ROTOR0_KM 0.05
+
+# Motor 1: Rear-Left
+param set CA_ROTOR1_PX -0.4428
+param set CA_ROTOR1_PY -0.4192
+param set CA_ROTOR1_KM 0.05
+
+# Motor 2: Front-Left
+param set CA_ROTOR2_PX 0.4416
+param set CA_ROTOR2_PY -0.4236
+param set CA_ROTOR2_KM -0.05
+
+# Motor 3: Rear-Right
+param set CA_ROTOR3_PX -0.4428
+param set CA_ROTOR3_PY 0.4192
+param set CA_ROTOR3_KM -0.05
+
+# Motor 4: Nose Tractor/Puller - thrust along +X axis (forward)
+param set CA_ROTOR4_AX 1.0
+param set CA_ROTOR4_AZ 0.0
+param set CA_ROTOR4_PX 0.5256
+
+# -----------------------------------------------------------------------
+# ESC OUTPUT MAPPING
+# -----------------------------------------------------------------------
+param set SIM_GZ_EC_FUNC1 101
+param set SIM_GZ_EC_MIN1 10
+param set SIM_GZ_EC_MAX1 1500
+param set SIM_GZ_EC_FUNC2 102
+param set SIM_GZ_EC_MIN2 10
+param set SIM_GZ_EC_MAX2 1500
+param set SIM_GZ_EC_FUNC3 103
+param set SIM_GZ_EC_MIN3 10
+param set SIM_GZ_EC_MAX3 1500
+param set SIM_GZ_EC_FUNC4 104
+param set SIM_GZ_EC_MIN4 10
+param set SIM_GZ_EC_MAX4 1500
+
+# Puller motor
+param set SIM_GZ_EC_FUNC5 105
+param set SIM_GZ_EC_MIN5 0
+param set SIM_GZ_EC_MAX5 3500
+
+# -----------------------------------------------------------------------
+# SERVO OUTPUT: V-tail ruddervators
+# -----------------------------------------------------------------------
+param set SIM_GZ_SV_FUNC1 201
+param set SIM_GZ_SV_FUNC2 202
+
+# -----------------------------------------------------------------------
+# CONTROL SURFACES: V-Tail (type 7/8)
+# -----------------------------------------------------------------------
+param set CA_SV_CS_COUNT 2
+param set CA_SV_CS0_TYPE 7
+param set CA_SV_CS0_TRQ_P 0.5
+param set CA_SV_CS0_TRQ_Y 0.5
+param set CA_SV_CS1_TYPE 8
+param set CA_SV_CS1_TRQ_P 0.5
+param set CA_SV_CS1_TRQ_Y -0.5
+
+# -----------------------------------------------------------------------
+# VTOL TRANSITION
+# -----------------------------------------------------------------------
+param set VT_TYPE 2
+param set VT_FWD_THRUST_EN 4
+param set VT_PITCH_MIN -5
+param set VT_F_TRANS_THR 0.9
+param set VT_B_TRANS_DUR 8
+
+# -----------------------------------------------------------------------
+# FIXED-WING CONTROLLER (7.8kg, 2.4m span)
+# -----------------------------------------------------------------------
+param set NPFG_PERIOD 12
+param set FW_PR_FF 0.2
+param set FW_PR_P 0.9
+param set FW_PSP_OFF 2
+param set FW_P_LIM_MIN -15
+param set FW_P_LIM_MAX 20
+param set FW_RR_FF 0.1
+param set FW_RR_P 0.3
+param set FW_THR_TRIM 0.25
+param set FW_THR_MAX 0.6
+param set FW_THR_MIN 0.05
+param set FW_T_CLMB_MAX 8
+param set FW_T_SINK_MAX 2.7
+param set FW_T_SINK_MIN 2.2
+param set FW_AIRSPD_MIN 12
+param set FW_AIRSPD_TRIM 16
+param set FW_AIRSPD_MAX 25
+
+# -----------------------------------------------------------------------
+# MULTICOPTER CONTROLLER (7.8kg, sub-millimeter motor mount geometry)
+# -----------------------------------------------------------------------
+param set MC_AIRMODE 1
+param set MC_ROLLRATE_P 0.25
+param set MC_PITCHRATE_P 0.25
+param set MC_YAW_P 1.6
+param set MC_YAWRATE_P 0.15
+
+# -----------------------------------------------------------------------
+# MISSION & NAVIGATION
+# -----------------------------------------------------------------------
+param set MIS_TAKEOFF_ALT 10
+param set MPC_XY_P 0.8
+param set MPC_XY_VEL_P_ACC 3
+param set MPC_XY_VEL_I_ACC 4
+param set MPC_XY_VEL_D_ACC 0.1
+param set NAV_ACC_RAD 5

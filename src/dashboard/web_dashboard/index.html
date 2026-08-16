@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quadplane Condor — Flight Mission & Visual Map Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Top Header -->
+        <header>
+            <div class="logo-section">
+                <div class="radar-pulse"></div>
+                <div>
+                    <h1>QUADPLANE CONDOR</h1>
+                    <span class="sub-title">Hybrid VTOL (4+1 Motors | 2.4m Wingspan) Mission Center</span>
+                </div>
+            </div>
+
+            <!-- Top Lifecycle Progress Bar -->
+            <div class="lifecycle-bar" id="lifecycle-container">
+                <div class="lifecycle-step active" id="step-ground">1. BÃI ĐÁP</div>
+                <div class="lifecycle-step" id="step-takeoff">2. CẤT CÁNH VTOL</div>
+                <div class="lifecycle-step" id="step-mission">3. BAY KỊCH BẢN</div>
+                <div class="lifecycle-step" id="step-return">4. TIẾP CẬN RTL</div>
+                <div class="lifecycle-step" id="step-land">5. HẠ CÁNH AN TOÀN</div>
+            </div>
+
+            <div class="status-bar">
+                <div class="status-badge" id="ws-badge">
+                    <span class="dot"></span> <span id="ws-text">WS: KẾT NỐI</span>
+                </div>
+                <div class="status-badge mode-badge" id="mode-badge">
+                    CHẾ ĐỘ: <strong id="flight-mode">VTOL_HOVER</strong>
+                </div>
+                <div class="status-badge battery-badge">
+                    🔋 <span id="battery-voltage">22.2V</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Workspace Grid -->
+        <main class="main-grid">
+            <!-- Left Panel: Flight Scenarios & Mission Control -->
+            <aside class="panel left-panel">
+                <div class="panel-header">
+                    <h2>🎯 KỊCH BẢN BAY (SCENARIOS)</h2>
+                </div>
+
+                <div class="scenario-list">
+                    <button class="scenario-card active" data-scenario="hover">
+                        <div class="sc-icon">🚁</div>
+                        <div class="sc-info">
+                            <h3>1. Cất Cánh & Bay Treo (Hover)</h3>
+                            <p>Cất cánh thẳng đứng lên 10m, bay treo 12s, hạ cánh</p>
+                        </div>
+                    </button>
+
+                    <button class="scenario-card" data-scenario="square">
+                        <div class="sc-icon">🔲</div>
+                        <div class="sc-info">
+                            <h3>2. Quỹ Đạo Hình Vuông (Square)</h3>
+                            <p>Tuần tra chu vi 20m x 20m ở độ cao 12m (3.5 m/s)</p>
+                        </div>
+                    </button>
+
+                    <button class="scenario-card" data-scenario="circle">
+                        <div class="sc-icon">🔄</div>
+                        <div class="sc-info">
+                            <h3>3. Quỹ Đạo Hình Tròn (Circle)</h3>
+                            <p>Bay lượn giám sát bán kính R=15m ở độ cao 15m</p>
+                        </div>
+                    </button>
+
+                    <button class="scenario-card" data-scenario="figure8">
+                        <div class="sc-icon">♾️</div>
+                        <div class="sc-info">
+                            <h3>4. Quỹ Đạo Số 8 (Figure-8)</h3>
+                            <p>Đường cong Lissajous 25m x 45m kiểm tra cơ động</p>
+                        </div>
+                    </button>
+
+                    <button class="scenario-card highlight" data-scenario="vtol_mission">
+                        <div class="sc-icon">✈️</div>
+                        <div class="sc-info">
+                            <h3>5. Nhiệm Vụ Bay Lai Toàn Diện (Full VTOL)</h3>
+                            <p>Takeoff ➔ Chuyển Cánh Bằng 18m/s ➔ Land (Tiết kiệm 80% Pin)</p>
+                        </div>
+                    </button>
+                </div>
+
+                <div class="action-btn-group">
+                    <button id="btn-start-scenario" class="btn btn-primary btn-glow">
+                        ▶️ BẮT ĐẦU BAY KỊCH BẢN
+                    </button>
+                    <div class="dual-buttons">
+                        <button id="btn-rtl" class="btn btn-warning">🏠 Quay Về & Hạ Cánh (RTL)</button>
+                        <button id="btn-clear-path" class="btn btn-secondary">🧹 Xóa Vết Bay</button>
+                    </div>
+                </div>
+
+                <!-- 5 Motors Status Panel -->
+                <div class="propulsion-box">
+                    <h3>⚡ TRẠNG THÁI 5 ĐỘNG CƠ CONDOR</h3>
+                    <div class="motors-visual">
+                        <div class="quad-layer">
+                            <div class="motor-pod pod-fl">
+                                <span class="m-label">M2 (FL - CW)</span>
+                                <div class="m-bar"><div class="m-fill" id="bar-m2"></div></div>
+                                <span class="m-rpm" id="rpm-m2">8500 RPM</span>
+                            </div>
+                            <div class="motor-pod pod-fr">
+                                <span class="m-label">M0 (FR - CCW)</span>
+                                <div class="m-bar"><div class="m-fill" id="bar-m0"></div></div>
+                                <span class="m-rpm" id="rpm-m0">8500 RPM</span>
+                            </div>
+                            <div class="motor-pod pod-rl">
+                                <span class="m-label">M1 (RL - CCW)</span>
+                                <div class="m-bar"><div class="m-fill" id="bar-m1"></div></div>
+                                <span class="m-rpm" id="rpm-m1">8500 RPM</span>
+                            </div>
+                            <div class="motor-pod pod-rr">
+                                <span class="m-label">M3 (RR - CW)</span>
+                                <div class="m-bar"><div class="m-fill" id="bar-m3"></div></div>
+                                <span class="m-rpm" id="rpm-m3">8500 RPM</span>
+                            </div>
+                        </div>
+
+                        <!-- Nose Puller Motor -->
+                        <div class="nose-pod">
+                            <span class="m-label">M4 MŨI KÉO TIẾN (15'' TRACTOR)</span>
+                            <div class="m-bar"><div class="m-fill tractor-fill" id="bar-m4"></div></div>
+                            <span class="m-rpm" id="rpm-m4">0 RPM</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Center Panel: Interactive Live Satellite & Vector Map -->
+            <section class="panel center-panel">
+                <div class="map-toolbar">
+                    <div class="map-title">
+                        <h2>🗺️ BẢN ĐỒ QUỸ ĐẠO THỰC ĐỊA (GPS SATELLITE MAP)</h2>
+                        <span class="map-coord">Tọa độ xuất phát: Hà Nội (21.028511°N, 105.804817°E)</span>
+                    </div>
+                    <div class="map-controls">
+                        <button id="btn-layer-sat" class="layer-btn active">Vệ Tinh</button>
+                        <button id="btn-layer-osm" class="layer-btn">Đường Phố</button>
+                        <button id="btn-recenter" class="layer-btn">🎯 Tâm Máy Bay</button>
+                    </div>
+                </div>
+
+                <div id="leaflet-map" class="interactive-map"></div>
+
+                <div class="map-legend">
+                    <span class="legend-item"><span class="legend-dot green"></span> Bãi đáp gốc (Home)</span>
+                    <span class="legend-item"><span class="legend-dot orange"></span> Quỹ đạo kịch bản đã lập trình</span>
+                    <span class="legend-item"><span class="legend-dot cyan"></span> Vết bay thực tế (Live Flown Trail)</span>
+                    <span class="legend-item"><span class="legend-dot magenta"></span> Điểm mục tiêu tiếp theo</span>
+                </div>
+            </section>
+
+            <!-- Right Panel: Primary Flight Display, 3D Trajectory & Telemetry -->
+            <aside class="panel right-panel">
+                <!-- PFD & Flight Instruments -->
+                <div class="instrument-box">
+                    <h2>🕹️ PRIMARY FLIGHT DISPLAY (PFD)</h2>
+                    <div class="instruments-grid">
+                        <div class="pfd-wrapper">
+                            <svg id="horizon-svg" viewBox="0 0 160 120">
+                                <defs>
+                                    <clipPath id="horizon-clip">
+                                        <circle cx="80" cy="60" r="50"/>
+                                    </clipPath>
+                                </defs>
+                                <g clip-path="url(#horizon-clip)">
+                                    <g id="horizon-pitch-roll">
+                                        <rect x="-40" y="-100" width="240" height="160" fill="#1e40af"/>
+                                        <rect x="-40" y="60" width="240" height="160" fill="#78350f"/>
+                                        <line x1="-40" y1="60" x2="200" y2="60" stroke="#ffffff" stroke-width="2"/>
+                                    </g>
+                                </g>
+                                <circle cx="80" cy="60" r="50" fill="none" stroke="#475569" stroke-width="3"/>
+                                <line x1="55" y1="60" x2="75" y2="60" stroke="#f59e0b" stroke-width="3"/>
+                                <line x1="85" y1="60" x2="105" y2="60" stroke="#f59e0b" stroke-width="3"/>
+                                <circle cx="80" cy="60" r="3" fill="#f59e0b"/>
+                            </svg>
+                            <div class="compass-label">Hướng mũi: <strong id="val-heading">0.0°</strong></div>
+                        </div>
+
+                        <div class="telemetry-readouts">
+                            <div class="readout-card">
+                                <span class="r-label">Độ cao (Alt)</span>
+                                <span class="r-val" id="val-alt">0.0</span> <span class="r-unit">m</span>
+                            </div>
+                            <div class="readout-card">
+                                <span class="r-label">Tốc độ khí (Airspeed)</span>
+                                <span class="r-val" id="val-airspeed">0.0</span> <span class="r-unit">m/s</span>
+                            </div>
+                            <div class="readout-card">
+                                <span class="r-label">Tốc độ đất (GS)</span>
+                                <span class="r-val" id="val-groundspeed">0.0</span> <span class="r-unit">m/s</span>
+                            </div>
+                            <div class="readout-card">
+                                <span class="r-label">Tiết kiệm năng lượng</span>
+                                <span class="r-val highlight-val" id="val-savings">80.0</span> <span class="r-unit">%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3D Trajectory Visualization -->
+                <div class="plot-box">
+                    <h2>📈 KHÔNG GIAN QUỸ ĐẠO 3D (3D TRAJECTORY)</h2>
+                    <div id="plot-3d" class="plotly-container"></div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
