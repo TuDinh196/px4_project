@@ -15,12 +15,16 @@ Generates comprehensive flight performance plots and energy comparisons:
   - Power & Energy Consumption vs Pure Multicopter
 """
 
+import sys
 from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src.controllers.condor_vtol_controller import VTOLHybridController
-from src.uav_model.condor_dynamics import QuadplaneDynamics, QuadplaneParams
+# Add project root to path
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+from src.controllers.condor_vtol_controller import VTOLHybridController  # noqa: E402
+from src.uav_model.condor_dynamics import QuadplaneDynamics, QuadplaneParams  # noqa: E402
 
 
 def run_vtol_mission_simulation():

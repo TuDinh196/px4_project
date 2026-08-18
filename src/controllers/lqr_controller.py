@@ -38,13 +38,13 @@ class LQRController(ControllerBase):
         Iyy: float = 1.06,
         Izz: float = 2.50,
         drag_coeff: float = 0.05,
-        q_pos_xy: float = 8.0,
-        q_pos_z: float = 15.0,
-        q_vel: float = 3.0,
-        q_angle: float = 10.0,
-        q_rate: float = 1.0,
-        r_thrust: float = 0.5,
-        r_torque: float = 2.0,
+        q_pos_xy: float = 40.0,
+        q_pos_z: float = 80.0,
+        q_vel: float = 15.0,
+        q_angle: float = 60.0,
+        q_rate: float = 5.0,
+        r_thrust: float = 0.02,
+        r_torque: float = 0.3,
     ):
         """
         Args:

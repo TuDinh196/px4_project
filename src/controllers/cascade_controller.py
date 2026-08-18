@@ -27,9 +27,9 @@ class CascadeController(ControllerBase):
         # ---- Outer loop: Position PID (x, y, z) ----
         # Output: desired roll, pitch angles + thrust
         self.pid_x = PIDController(
-            kp=1.5,
-            ki=0.08,
-            kd=1.0,
+            kp=2.2,
+            ki=0.04,
+            kd=1.4,
             output_min=-0.45,
             output_max=0.45,
             integral_min=-1.5,
@@ -37,9 +37,9 @@ class CascadeController(ControllerBase):
             derivative_filter_coeff=0.3,
         )
         self.pid_y = PIDController(
-            kp=1.5,
-            ki=0.08,
-            kd=1.0,
+            kp=2.2,
+            ki=0.04,
+            kd=1.4,
             output_min=-0.45,
             output_max=0.45,
             integral_min=-1.5,
@@ -47,30 +47,30 @@ class CascadeController(ControllerBase):
             derivative_filter_coeff=0.3,
         )
         self.pid_z = PIDController(
-            kp=3.5,
-            ki=0.8,
-            kd=2.2,
-            output_min=-40.0,
-            output_max=40.0,
-            integral_min=-15.0,
-            integral_max=15.0,
+            kp=4.2,
+            ki=0.25,
+            kd=3.2,
+            output_min=-45.0,
+            output_max=45.0,
+            integral_min=-10.0,
+            integral_max=10.0,
             derivative_filter_coeff=0.3,
         )
 
         # ---- Middle loop: Attitude PID (roll, pitch, yaw) ----
         # Output: desired body rates [p, q, r]
         self.pid_roll = PIDController(
-            kp=7.5,
+            kp=8.5,
             ki=0.0,
-            kd=0.6,
+            kd=0.7,
             output_min=-3.0,
             output_max=3.0,
             derivative_filter_coeff=0.2,
         )
         self.pid_pitch = PIDController(
-            kp=7.5,
+            kp=8.5,
             ki=0.0,
-            kd=0.6,
+            kd=0.7,
             output_min=-3.0,
             output_max=3.0,
             derivative_filter_coeff=0.2,

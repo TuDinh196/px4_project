@@ -275,6 +275,10 @@ def run_simulation(
 
     wall_start = time.perf_counter()
 
+    ctrl_dt = getattr(controller, "control_dt", dt)
+    decimation = max(1, int(round(ctrl_dt / dt)))
+    thrust, torque = 0.0, np.zeros(3)
+
     for i in range(n_steps):
         t = i * dt
 
@@ -288,14 +292,15 @@ def run_simulation(
         else:
             sp = np.zeros(3)
 
-        # Compute control
-        ctrl_sp = sp if isinstance(controller, GeometricController) else sp[0:3]
-        thrust, torque = controller.compute(
-            position_setpoint=ctrl_sp,
-            yaw_setpoint=0.0,
-            current_state=drone.state,
-            dt=dt,
-        )
+        # Compute control at controller loop rate
+        if i % decimation == 0:
+            ctrl_sp = sp if isinstance(controller, GeometricController) else sp[0:3]
+            thrust, torque = controller.compute(
+                position_setpoint=ctrl_sp,
+                yaw_setpoint=0.0,
+                current_state=drone.state,
+                dt=ctrl_dt,
+            )
 
         # Step dynamics
         drone.step(thrust, torque, dt)

@@ -37,6 +37,7 @@ print_error()  { echo -e "  ${RED}❌${NC} $1"; }
 print_info()   { echo -e "  ${BLUE}ℹ️${NC}  $1"; }
 
 activate_venv() {
+    export PYTHONPATH="$PROJECT_DIR:${PYTHONPATH:-}"
     if [ -f "$PROJECT_DIR/venv_linux/bin/activate" ]; then
         source "$PROJECT_DIR/venv_linux/bin/activate"
     elif [ -f "$PROJECT_DIR/venv/bin/activate" ]; then
@@ -51,7 +52,7 @@ set_simulation_env() {
     export PX4_GZ_MODELS="$PROJECT_DIR/models"
     export PX4_GZ_WORLDS="$PROJECT_DIR/models/worlds"
     export PX4_SIM_MODEL=quadplane_condor
-    export PX4_GZ_MODEL_NAME=quadplane_condor
+    unset PX4_GZ_MODEL_NAME
     export PX4_HOME_LAT=21.028511
     export PX4_HOME_LON=105.804817
     export PX4_HOME_ALT=0.0
@@ -190,13 +191,13 @@ cmd_all() {
     set_simulation_env "$world"
 
     cd "$PX4_DIR"
-    make px4_sitl gz_quadplane_condor > "$LOG_DIR/px4_sitl.log" 2>&1 &
+    sleep 999999 | make px4_sitl gz_quadplane_condor > "$LOG_DIR/px4_sitl.log" 2>&1 &
     local px4_pid=$!
 
     echo "  Waiting for PX4 SITL to initialize..."
     local timeout=120
     local elapsed=0
-    while ! grep -q "Ready for takeoff" "$LOG_DIR/px4_sitl.log" 2>/dev/null; do
+    while ! grep -E -q "Ready for takeoff|Startup script returned successfully" "$LOG_DIR/px4_sitl.log" 2>/dev/null; do
         sleep 2
         elapsed=$((elapsed + 2))
         if [ $elapsed -ge $timeout ]; then

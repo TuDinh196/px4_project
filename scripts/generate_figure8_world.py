@@ -314,12 +314,6 @@ def generate_figure8_world():
       </link>
     </model>
 
-    <!-- Embedded Quadplane Condor at Origin (Pointing True North) -->
-    <include>
-      <uri>model://quadplane_condor</uri>
-      <name>quadplane_condor_0</name>
-      <pose>0 0 0.35 0 0 0</pose>
-    </include>
 
     <!-- Geographic Origin (Hanoi Coordinates) -->
     <spherical_coordinates>

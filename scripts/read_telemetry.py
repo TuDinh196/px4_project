@@ -40,7 +40,9 @@ async def run():
 
     async for battery in drone.telemetry.battery():
         print(f"Battery Voltage: {battery.voltage_v:.2f} V")
-        print(f"Battery Remaining: {battery.remaining_percent * 100:.1f}%")
+        pct = battery.remaining_percent
+        rem = pct * 100 if pct <= 1.0 else pct
+        print(f"Battery Remaining: {rem:.1f}%")
         break
 
     async for mode in drone.telemetry.flight_mode():

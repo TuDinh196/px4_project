@@ -15,6 +15,13 @@ log_path = os.path.join(project_dir, "logs", "flight_telemetry.csv")
 if not os.path.exists(log_path):
     log_path = os.path.join(project_dir, "flight_telemetry.csv")
 
+if not os.path.exists(log_path):
+    print(
+        f"⚠️ No telemetry log found at {log_path}. "
+        "Run a flight mission first (e.g. ./manage.sh geometric)."
+    )
+    exit(0)
+
 df = pd.read_csv(log_path)
 
 # Calculate errors

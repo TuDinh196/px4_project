@@ -1,13 +1,17 @@
 import asyncio
-from pathlib import Path
+import sys
 import time
+from pathlib import Path
 
 import numpy as np
 
-from src.controllers.geometric_controller import GeometricController
-from src.px4_integration.mavsdk_bridge import MAVSDKBridge
-from src.px4_integration.offboard_controller import OffboardController
-from src.simulation.condor_closed_loop_sim import generate_giant_lemniscate_setpoints
+# Add project root to path
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+from src.controllers.geometric_controller import GeometricController  # noqa: E402
+from src.px4_integration.mavsdk_bridge import MAVSDKBridge  # noqa: E402
+from src.px4_integration.offboard_controller import OffboardController  # noqa: E402
+from src.simulation.condor_closed_loop_sim import generate_giant_lemniscate_setpoints  # noqa: E402
 
 
 async def run_geometric_lemniscate():

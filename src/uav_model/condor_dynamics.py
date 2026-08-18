@@ -102,6 +102,16 @@ class QuadplaneParams:
         """Total vertical thrust required to hover (N)."""
         return self.mass * self.gravity
 
+    @property
+    def drag_coeff(self) -> float:
+        """Parasitic zero-lift drag coefficient (alias for CD0)."""
+        return self.CD0
+
+    @property
+    def rho(self) -> float:
+        """Air density (alias for air_density)."""
+        return self.air_density
+
 
 # Alias QuadrotorParams to QuadplaneParams for backwards compatibility in existing tests
 QuadrotorParams = QuadplaneParams

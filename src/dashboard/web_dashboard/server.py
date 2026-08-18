@@ -8,15 +8,20 @@ and automated flight lifecycle states to the Web Dashboard.
 import asyncio
 import json
 import math
+import sys
+from pathlib import Path
 
 import numpy as np
 import websockets
 
-from src.controllers.condor_vtol_controller import VTOLHybridController
-from src.px4_integration.mavsdk_bridge import MAVSDKBridge
-from src.px4_integration.offboard_controller import OffboardController
-from src.scenarios.flight_scenarios import FlightScenarios
-from src.uav_model.condor_dynamics import QuadplaneDynamics, QuadplaneParams
+# Add project root to sys.path
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+
+from src.controllers.condor_vtol_controller import VTOLHybridController  # noqa: E402
+from src.px4_integration.mavsdk_bridge import MAVSDKBridge  # noqa: E402
+from src.px4_integration.offboard_controller import OffboardController  # noqa: E402
+from src.scenarios.flight_scenarios import FlightScenarios  # noqa: E402
+from src.uav_model.condor_dynamics import QuadplaneDynamics, QuadplaneParams  # noqa: E402
 
 # Global handles
 bridge = None
